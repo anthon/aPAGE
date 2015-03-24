@@ -1,0 +1,19 @@
+{
+  "name": "aPAGE",
+  "version": "0.1.0",
+  "authors": [
+    "Anthon Astrom <anthon@astromzimmer.com>"
+  ],
+  "description": "A scrolling plugin thingy.",
+  "main": "aPAGE.js",
+  "license": "aLICENCE",
+  "homepage": "astromzimmer.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {}
+}
