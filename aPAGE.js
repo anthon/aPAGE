@@ -88,17 +88,18 @@
       target = document.getElementById(target_id);
       return scrollTo(target);
     };
-    paintTriggers = function(trigger) {
-      var i, _i, _ref;
+    paintTriggers = function(target) {
+      var i, trigger, _i, _ref;
       for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
         _triggers[i].className = _triggers[i].className.replace('active', '').trim();
       }
-      if (trigger) {
-        return trigger.className += ' active';
+      trigger = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target="' + target.id + '"]');
+      if (trigger[0]) {
+        return trigger[0].className += ' active';
       }
     };
     scrollTo = function(el) {
-      var current_margin, offset_top, rect, style, trigger;
+      var current_margin, offset_top, rect, style;
       _current_index = typeof el === 'number' ? el : _elements.indexOf(el);
       _current_target = typeof el === 'number' ? _elements[el] : el;
       _scrolling = true;
@@ -107,10 +108,7 @@
       style = _scroller.currentStyle || window.getComputedStyle(_scroller);
       current_margin = Math.abs(parseInt(style.marginTop.replace('px', '')));
       _scroller.style.marginTop = '-' + (Math.abs(current_margin) + offset_top) + 'px';
-      trigger = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target="' + _current_target.id + '"]');
-      if (trigger[0]) {
-        paintTriggers(trigger[0]);
-      }
+      paintTriggers(_current_target);
       return setTimeout(function() {
         return _scrolling = false;
       }, _settings.duration);

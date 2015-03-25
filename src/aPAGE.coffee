@@ -67,12 +67,13 @@ A = (selector,options)->
 		target = document.getElementById target_id
 		scrollTo target
 
-	paintTriggers = (trigger)->
+	paintTriggers = (target)->
 		# Reset active triggers
 		for i in [0..._triggers.length] by 1
 			_triggers[i].className = _triggers[i].className.replace('active','').trim()
 		# Get trigger and apply .active
-		if trigger then trigger.className += ' active'
+		trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+target.id+'"]'
+		if trigger[0] then trigger[0].className += ' active'
 
 	scrollTo = (el)->
 		_current_index = if typeof el is 'number' then el else _elements.indexOf el
@@ -84,8 +85,7 @@ A = (selector,options)->
 		current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
 		_scroller.style.marginTop = '-'+(Math.abs(current_margin)+offset_top)+'px'
 
-		trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+_current_target.id+'"]'
-		if trigger[0] then paintTriggers trigger[0]
+		paintTriggers _current_target
 
 		setTimeout ->
 			_scrolling = false
