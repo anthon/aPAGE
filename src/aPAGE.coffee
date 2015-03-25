@@ -20,6 +20,7 @@ A = (selector,options)->
 		_body = document.querySelector selector
 		_triggers = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target]'
 		setup()
+		scrollTo _elements[0]
 		if not _settings.halted then activate()
 
 	setup = ->
@@ -45,7 +46,6 @@ A = (selector,options)->
 			for i in [0..._triggers.length] by 1
 				_triggers[i].addEventListener 'click', onClick
 			_is_active = true
-			scrollTo _elements[0]
 
 	onScroll = (e)->
 		if not _scrolling

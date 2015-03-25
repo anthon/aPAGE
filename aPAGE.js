@@ -28,6 +28,7 @@
       _body = document.querySelector(selector);
       _triggers = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target]');
       setup();
+      scrollTo(_elements[0]);
       if (!_settings.halted) {
         return activate();
       }
@@ -58,8 +59,7 @@
         for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
           _triggers[i].addEventListener('click', onClick);
         }
-        _is_active = true;
-        return scrollTo(_elements[0]);
+        return _is_active = true;
       }
     };
     onScroll = function(e) {
