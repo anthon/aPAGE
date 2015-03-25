@@ -97,5 +97,10 @@ A = (selector,options)->
 
 	init(selector,options)
 
+	return {
+		halt: halt
+		activate: activate
+	}
+
 window.aPAGE = (selector,options)->
 	new A(selector,options)

@@ -119,7 +119,11 @@
         return _is_active = false;
       }
     };
-    return init(selector, options);
+    init(selector, options);
+    return {
+      halt: halt,
+      activate: activate
+    };
   };
 
   window.aPAGE = function(selector, options) {
