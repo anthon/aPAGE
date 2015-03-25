@@ -1,87 +1,91 @@
-A =
-	elements: []
-	current_scroll_top: 0
-	current_index: 0
-	current_target: null
-	scroller: null
-	scrolling: false
-	body: null
-	settings:
+A = (selector,options)->
+	_elements = []
+	_triggers = []
+	_current_scroll_top = 0
+	_current_index = 0
+	_current_target = null
+	_scroller = null
+	_scrolling = false
+	_body = null
+	_settings =
+		id: 'aPAGE'
 		duration: 500
 		fill: true
 
-	init: (selector,options)->
-		A.body = document.querySelector selector
-		A.triggers = document.querySelectorAll '[data-apage-target]'
+	init = (selector,options)->
 		for key,value of options
-			this.settings[key] = value
-		A.setup()
-		A.activate()
+			_settings[key] = value
+		_body = document.querySelector selector
+		_triggers = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target]'
+		setup()
+		activate()
 
-	setup: ->
-		A.body.style.overflow = 'hidden'
-		A.body.style.transform = 'translateZ(0)'
+	setup = ->
+		_body.style.overflow = 'hidden'
+		_body.style.transform = 'translateZ(0)'
 		# Initialise elements
-		elements = A.body.childNodes
+		elements = _body.childNodes
 		for i in [0...elements.length] by 1
 			element = elements[i]
 			if element.nodeType isnt 3
 				elements[i].style.position = 'relative'
-				if A.settings.fill
+				if _settings.fill
 					element = elements[i]
-				A.elements.push element
+				_elements.push element
 		# Append scroller
-		A.scroller = document.createElement 'div'
-		A.scroller.style.transition = 'margin-top '+(A.settings.duration/1000)+'s ease-in-out'
-		A.body.insertBefore A.scroller, A.elements[0]
+		_scroller = document.createElement 'div'
+		_scroller.style.transition = 'margin-top '+(_settings.duration/1000)+'s ease-in-out'
+		_body.insertBefore _scroller, _elements[0]
 
-	activate: ->
-		document.addEventListener 'wheel', this.onScroll
-		for i in [0...A.triggers.length] by 1
-			A.triggers[i].addEventListener 'click', this.onClick
-		A.scrollTo A.elements[0]
+	activate = ->
+		_body.addEventListener 'wheel', onScroll
+		for i in [0..._triggers.length] by 1
+			_triggers[i].addEventListener 'click', onClick
+		scrollTo _elements[0]
 
-	onScroll: (e)->
-		if not A.scrolling
-			scroll_top = A.body.scrollTop
+	onScroll = (e)->
+		if not _scrolling
+			scroll_top = _body.scrollTop
 			delta = e.deltaY
 			if Math.abs(delta) > 42
 				if delta > 0
-					target_index = if A.current_index is A.elements.length-1 then A.elements.length-1 else A.current_index+1
-					A.scrollTo A.elements[target_index]
+					target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
 				else
-					target_index = if A.current_index is 0 then 0 else A.current_index-1
-					A.scrollTo A.elements[target_index]
-				A.current_index = target_index
+					target_index = if _current_index is 0 then 0 else _current_index-1
+				scrollTo target_index
 
-	onClick: (e)->
+	onClick = (e)->
 		trigger = e.currentTarget
-		target_id = trigger.dataset.apageTarget
+		target_id = trigger.dataset[_settings.id.toLowerCase()+'Target']
 		target = document.getElementById target_id
-		A.scrollTo target
+		scrollTo target
 
-	paintTriggers: (trigger)->
+	paintTriggers = (trigger)->
 		# Reset active triggers
-		for i in [0...A.triggers.length] by 1
-			A.triggers[i].className = A.triggers[i].className.replace('active','').trim()
+		for i in [0..._triggers.length] by 1
+			_triggers[i].className = _triggers[i].className.replace('active','').trim()
 		# Get trigger and apply .active
 		trigger.className += ' active'
 
-	scrollTo: (el)->
-		A.scrolling = true
-		A.current_target = el
-		rect = A.current_target.getBoundingClientRect()
+	scrollTo = (el)->
+		_current_index = if typeof el is 'number' then el else _elements.indexOf el
+		_current_target = if typeof el is 'number' then _elements[el] else el
+		_scrolling = true
+		rect = _current_target.getBoundingClientRect()
 		offset_top = rect.top
-		style = A.scroller.currentStyle || window.getComputedStyle A.scroller
+		style = _scroller.currentStyle || window.getComputedStyle _scroller
 		current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
-		A.scroller.style.marginTop = '-'+(Math.abs(current_margin)+offset_top)+'px'
+		_scroller.style.marginTop = '-'+(Math.abs(current_margin)+offset_top)+'px'
+		console.log style.marginTop
 
-		trigger = document.querySelectorAll '[data-apage-target="'+A.current_target.id+'"]'
-		if trigger[0] then A.paintTriggers trigger[0]
+		trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+_current_target.id+'"]'
+		if trigger[0] then paintTriggers trigger[0]
 
 		setTimeout ->
-			A.scrolling = false
-		,A.settings.duration
+			_scrolling = false
+		,_settings.duration
+
+	init(selector,options)
 
 window.aPAGE = (selector,options)->
-	A.init(selector,options)
+	new A(selector,options)

@@ -15,13 +15,21 @@
 			height: 100%;
 		}
 
-		#menu {
+		.menu {
 			position: absolute;
 			top: 72px;
+		}
+
+		#menu1 {
 			left: 24px;
 		}
 
-		#menu .link {
+		#menu2 {
+			right: 24px;
+			text-align: right;
+		}
+
+		.menu .link {
 			background: rgba(0,0,0,.24);
 			margin: 4px 0 0;
 			padding: 6px;
@@ -29,8 +37,8 @@
 			cursor: pointer;
 		}
 
-		#menu .link.active,
-		#menu .link:hover {
+		.menu .link.active,
+		.menu .link:hover {
 			background: black;
 			margin: 4px 0 0;
 			padding: 6px;
@@ -38,24 +46,34 @@
 			cursor: pointer;
 		}
 
-		#view {
-			width: 100%;
+		.view {
+			position:  absolute;
+			top: 0;
+			width: 50%;
 			height: 100%;
 		}
 
-		#page1 {
+		#view1 {
+			left: 0;
+		}
+
+		#view2 {
+			right: 0;
+		}
+
+		.red {
 			background: red;
 		}
 
-		#page2 {
+		.blue {
 			background: blue;
 		}
 
-		#page3 {
+		.yellow {
 			background: yellow;
 		}
 
-		#page4 {
+		.green {
 			background: green;
 		}
 
@@ -70,23 +88,23 @@
 </head>
 <body>
 
-	<div id="view">
-		<div id="page1" class="page">
+	<div id="view1" class="view">
+		<div id="view1page1" class="page red">
 			<div class="content">
 				Page 1
 			</div>
 		</div>
-		<div id="page2" class="page">
+		<div id="view1page2" class="page blue">
 			<div class="content">
 				Page 2
 			</div>
 		</div>
-		<div id="page3" class="page">
+		<div id="view1page3" class="page yellow">
 			<div class="content">
 				Page 3
 			</div>
 		</div>
-		<div id="page4" class="page">
+		<div id="view1page4" class="page green">
 			<div class="content">
 				Page 4
 			</div>
@@ -94,16 +112,48 @@
 
 	</div>
 
-	<div id="menu">
-		<div class="link" data-aPAGE-target="page1">Got to page 1</div>
-		<div class="link" data-aPAGE-target="page2">Got to page 2</div>
-		<div class="link" data-aPAGE-target="page3">Got to page 3</div>
-		<div class="link" data-aPAGE-target="page4">Got to page 4</div>
+	<div id="view2" class="view">
+		<div id="view2page1" class="page blue">
+			<div class="content">
+				Page 1
+			</div>
+		</div>
+		<div id="view2page2" class="page green">
+			<div class="content">
+				Page 2
+			</div>
+		</div>
+		<div id="view2page3" class="page red">
+			<div class="content">
+				Page 3
+			</div>
+		</div>
+		<div id="view2page4" class="page yellow">
+			<div class="content">
+				Page 4
+			</div>
+		</div>
+
+	</div>
+
+	<div id="menu1" class="menu">
+		<div class="link" data-firstView-target="view1page1">Got to page 1</div>
+		<div class="link" data-firstView-target="view1page2">Got to page 2</div>
+		<div class="link" data-firstView-target="view1page3">Got to page 3</div>
+		<div class="link" data-firstView-target="view1page4">Got to page 4</div>
+	</div>
+
+	<div id="menu2" class="menu">
+		<div class="link" data-secondView-target="view2page1">Got to page 1</div>
+		<div class="link" data-secondView-target="view2page2">Got to page 2</div>
+		<div class="link" data-secondView-target="view2page3">Got to page 3</div>
+		<div class="link" data-secondView-target="view2page4">Got to page 4</div>
 	</div>
 
 	<script type="text/javascript">
 		
-		var aPage = new aPAGE('#view');
+		var aPage = new aPAGE('#view1',{id:'firstView'});
+		var aPage = new aPAGE('#view2',{id:'secondView'});
 
 	</script>
 
