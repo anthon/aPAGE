@@ -72,8 +72,9 @@ A = (selector,options)->
 		for i in [0..._triggers.length] by 1
 			_triggers[i].className = _triggers[i].className.replace('active','').trim()
 		# Get trigger and apply .active
-		trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+target.id+'"]'
-		if trigger[0] then trigger[0].className += ' active'
+		if target
+			trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+target.id+'"]'
+			if trigger[0] then trigger[0].className += ' active'
 
 	scrollTo = (el)->
 		_current_index = if typeof el is 'number' then el else _elements.indexOf el

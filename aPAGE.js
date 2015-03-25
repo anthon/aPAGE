@@ -93,9 +93,11 @@
       for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
         _triggers[i].className = _triggers[i].className.replace('active', '').trim();
       }
-      trigger = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target="' + target.id + '"]');
-      if (trigger[0]) {
-        return trigger[0].className += ' active';
+      if (target) {
+        trigger = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target="' + target.id + '"]');
+        if (trigger[0]) {
+          return trigger[0].className += ' active';
+        }
       }
     };
     scrollTo = function(el) {
