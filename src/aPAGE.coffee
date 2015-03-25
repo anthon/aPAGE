@@ -1,4 +1,5 @@
 A = (selector,options)->
+	_is_active = false
 	_elements = []
 	_triggers = []
 	_current_scroll_top = 0
@@ -38,10 +39,12 @@ A = (selector,options)->
 		_body.insertBefore _scroller, _elements[0]
 
 	activate = ->
-		_body.addEventListener 'wheel', onScroll
-		for i in [0..._triggers.length] by 1
-			_triggers[i].addEventListener 'click', onClick
-		scrollTo _elements[0]
+		if not _is_active
+			_body.addEventListener 'wheel', onScroll
+			for i in [0..._triggers.length] by 1
+				_triggers[i].addEventListener 'click', onClick
+			_is_active = true
+			scrollTo _elements[0]
 
 	onScroll = (e)->
 		if not _scrolling
@@ -85,10 +88,12 @@ A = (selector,options)->
 		,_settings.duration
 
 	halt = ->
-		_body.removeEventListener 'wheel', onScroll
-		for i in [0..._triggers.length] by 1
-			_triggers[i].removeEventListener 'click', onClick
-		paintTriggers null
+		if _is_active
+			_body.removeEventListener 'wheel', onScroll
+			for i in [0..._triggers.length] by 1
+				_triggers[i].removeEventListener 'click', onClick
+			paintTriggers null
+			_is_active = false
 
 	init(selector,options)
 

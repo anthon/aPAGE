@@ -3,7 +3,8 @@
   var A;
 
   A = function(selector, options) {
-    var activate, halt, init, onClick, onScroll, paintTriggers, scrollTo, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _scroller, _scrolling, _settings, _triggers;
+    var activate, halt, init, onClick, onScroll, paintTriggers, scrollTo, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _triggers;
+    _is_active = false;
     _elements = [];
     _triggers = [];
     _current_scroll_top = 0;
@@ -49,11 +50,14 @@
     };
     activate = function() {
       var i, _i, _ref;
-      _body.addEventListener('wheel', onScroll);
-      for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
-        _triggers[i].addEventListener('click', onClick);
+      if (!_is_active) {
+        _body.addEventListener('wheel', onScroll);
+        for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
+          _triggers[i].addEventListener('click', onClick);
+        }
+        _is_active = true;
+        return scrollTo(_elements[0]);
       }
-      return scrollTo(_elements[0]);
     };
     onScroll = function(e) {
       var delta, scroll_top, target_index;
@@ -106,11 +110,14 @@
     };
     halt = function() {
       var i, _i, _ref;
-      _body.removeEventListener('wheel', onScroll);
-      for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
-        _triggers[i].removeEventListener('click', onClick);
+      if (_is_active) {
+        _body.removeEventListener('wheel', onScroll);
+        for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
+          _triggers[i].removeEventListener('click', onClick);
+        }
+        paintTriggers(null);
+        return _is_active = false;
       }
-      return paintTriggers(null);
     };
     return init(selector, options);
   };
