@@ -12,6 +12,7 @@ A = (selector,options)->
 		id: 'aPAGE'
 		duration: 500
 		fill: true
+		halted: false
 
 	init = (selector,options)->
 		for key,value of options
@@ -19,7 +20,7 @@ A = (selector,options)->
 		_body = document.querySelector selector
 		_triggers = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target]'
 		setup()
-		activate()
+		if not halted then activate()
 
 	setup = ->
 		_body.style.overflow = 'hidden'

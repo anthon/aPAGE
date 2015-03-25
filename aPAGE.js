@@ -16,7 +16,8 @@
     _settings = {
       id: 'aPAGE',
       duration: 500,
-      fill: true
+      fill: true,
+      halted: false
     };
     init = function(selector, options) {
       var key, value;
@@ -27,7 +28,9 @@
       _body = document.querySelector(selector);
       _triggers = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target]');
       setup();
-      return activate();
+      if (!halted) {
+        return activate();
+      }
     };
     setup = function() {
       var element, elements, i, _i, _ref;
