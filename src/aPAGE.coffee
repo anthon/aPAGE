@@ -65,7 +65,7 @@ A = (selector,options)->
 		for i in [0..._triggers.length] by 1
 			_triggers[i].className = _triggers[i].className.replace('active','').trim()
 		# Get trigger and apply .active
-		trigger.className += ' active'
+		if trigger then trigger.className += ' active'
 
 	scrollTo = (el)->
 		_current_index = if typeof el is 'number' then el else _elements.indexOf el
@@ -83,6 +83,12 @@ A = (selector,options)->
 		setTimeout ->
 			_scrolling = false
 		,_settings.duration
+
+	halt = ->
+		_body.removeEventListener 'wheel', onScroll
+		for i in [0..._triggers.length] by 1
+			_triggers[i].removeEventListener 'click', onClick
+		paintTriggers null
 
 	init(selector,options)
 

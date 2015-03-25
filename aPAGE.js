@@ -3,7 +3,7 @@
   var A;
 
   A = function(selector, options) {
-    var activate, init, onClick, onScroll, paintTriggers, scrollTo, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _scroller, _scrolling, _settings, _triggers;
+    var activate, halt, init, onClick, onScroll, paintTriggers, scrollTo, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _scroller, _scrolling, _settings, _triggers;
     _elements = [];
     _triggers = [];
     _current_scroll_top = 0;
@@ -82,7 +82,9 @@
       for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
         _triggers[i].className = _triggers[i].className.replace('active', '').trim();
       }
-      return trigger.className += ' active';
+      if (trigger) {
+        return trigger.className += ' active';
+      }
     };
     scrollTo = function(el) {
       var current_margin, offset_top, rect, style, trigger;
@@ -101,6 +103,14 @@
       return setTimeout(function() {
         return _scrolling = false;
       }, _settings.duration);
+    };
+    halt = function() {
+      var i, _i, _ref;
+      _body.removeEventListener('wheel', onScroll);
+      for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
+        _triggers[i].removeEventListener('click', onClick);
+      }
+      return paintTriggers(null);
     };
     return init(selector, options);
   };
