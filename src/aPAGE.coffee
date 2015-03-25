@@ -76,7 +76,6 @@ A = (selector,options)->
 		style = _scroller.currentStyle || window.getComputedStyle _scroller
 		current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
 		_scroller.style.marginTop = '-'+(Math.abs(current_margin)+offset_top)+'px'
-		console.log style.marginTop
 
 		trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+_current_target.id+'"]'
 		if trigger[0] then paintTriggers trigger[0]
