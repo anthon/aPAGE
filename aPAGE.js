@@ -28,7 +28,7 @@
       _body = document.querySelector(selector);
       _triggers = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target]');
       setup();
-      if (!halted) {
+      if (!_settings.halted) {
         return activate();
       }
     };

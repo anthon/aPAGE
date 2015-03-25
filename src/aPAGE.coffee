@@ -20,7 +20,7 @@ A = (selector,options)->
 		_body = document.querySelector selector
 		_triggers = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target]'
 		setup()
-		if not halted then activate()
+		if not _settings.halted then activate()
 
 	setup = ->
 		_body.style.overflow = 'hidden'
