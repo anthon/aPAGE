@@ -59,7 +59,9 @@
           _triggers[i].addEventListener('click', onClick);
         }
         _is_active = true;
-        if (!_current_target) {
+        if (_current_target) {
+          return paintTriggers(_current_target);
+        } else {
           return scrollTo(_elements[0]);
         }
       }

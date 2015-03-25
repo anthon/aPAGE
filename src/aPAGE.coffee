@@ -45,7 +45,10 @@ A = (selector,options)->
 			for i in [0..._triggers.length] by 1
 				_triggers[i].addEventListener 'click', onClick
 			_is_active = true
-			if not _current_target then scrollTo _elements[0]
+			if _current_target
+				paintTriggers _current_target
+			else
+				scrollTo _elements[0]
 
 	onScroll = (e)->
 		if not _scrolling
