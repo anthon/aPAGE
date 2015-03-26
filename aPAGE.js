@@ -3,7 +3,7 @@
   var A;
 
   A = function(selector, options) {
-    var activate, halt, init, onClick, onScroll, paintTriggers, scrollTo, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _triggers;
+    var activate, fire, halt, init, onClick, onHashChange, onScroll, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _triggers;
     _is_active = false;
     _elements = [];
     _triggers = [];
@@ -17,7 +17,8 @@
       id: 'aPAGE',
       duration: 500,
       fill: true,
-      halted: false
+      halted: false,
+      hashed: true
     };
     init = function(selector, options) {
       var key, value;
@@ -55,6 +56,9 @@
       var i, _i, _ref;
       if (!_is_active) {
         _body.addEventListener('wheel', onScroll);
+        if (_settings.hashed) {
+          window.addEventListener('hashchange', onHashChange);
+        }
         for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
           _triggers[i].addEventListener('click', onClick);
         }
@@ -62,7 +66,7 @@
         if (_current_target) {
           return paintTriggers(_current_target);
         } else {
-          return scrollTo(_elements[0]);
+          return fire(_elements[0]);
         }
       }
     };
@@ -77,16 +81,49 @@
           } else {
             target_index = _current_index === 0 ? 0 : _current_index - 1;
           }
-          return scrollTo(target_index);
+          return fire(target_index);
         }
       }
+    };
+    onHashChange = function(e) {
+      var hash_array, target_id, target_index, target_node;
+      hash_array = window.location.hash.split(':');
+      if (hash_array[1]) {
+        if (hash_array[0].replace('#', '') !== _settings.id) {
+          return false;
+        }
+        target_id = hash_array[1];
+      } else {
+        target_id = hash_array[0];
+      }
+      e.preventDefault();
+      target_node = document.getElementById(target_id);
+      target_index = _elements.indexOf(target_node);
+      fire(target_index);
+      return false;
     };
     onClick = function(e) {
       var target, target_id, trigger;
       trigger = e.currentTarget;
       target_id = trigger.dataset[_settings.id.toLowerCase() + 'Target'];
       target = document.getElementById(target_id);
-      return scrollTo(target);
+      return fire(target);
+    };
+    fire = function(el) {
+      _current_index = isNaN(el) ? _elements.indexOf(el) : parseInt(el);
+      _current_target = isNaN(el) ? el : _elements[parseInt(el)];
+      if (_settings.hashed) {
+        setHash();
+      }
+      return scroll();
+    };
+    setHash = function() {
+      var hash;
+      hash = _current_target.id ? _current_target.id : _current_index;
+      if (_settings.id) {
+        hash = _settings.id + ':' + hash;
+      }
+      return window.location.hash = hash;
     };
     paintTriggers = function(target) {
       var i, trigger, _i, _ref;
@@ -100,10 +137,8 @@
         }
       }
     };
-    scrollTo = function(el) {
+    scroll = function(el) {
       var current_margin, offset_top, rect, style;
-      _current_index = typeof el === 'number' ? el : _elements.indexOf(el);
-      _current_target = typeof el === 'number' ? _elements[el] : el;
       _scrolling = true;
       rect = _current_target.getBoundingClientRect();
       offset_top = rect.top;

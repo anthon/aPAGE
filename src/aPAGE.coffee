@@ -13,6 +13,7 @@ A = (selector,options)->
 		duration: 500
 		fill: true
 		halted: false
+		hashed: true
 
 	init = (selector,options)->
 		for key,value of options
@@ -42,13 +43,14 @@ A = (selector,options)->
 	activate = ->
 		if not _is_active
 			_body.addEventListener 'wheel', onScroll
+			if _settings.hashed then window.addEventListener 'hashchange', onHashChange
 			for i in [0..._triggers.length] by 1
 				_triggers[i].addEventListener 'click', onClick
 			_is_active = true
 			if _current_target
 				paintTriggers _current_target
 			else
-				scrollTo _elements[0]
+				fire _elements[0]
 
 	onScroll = (e)->
 		if not _scrolling
@@ -59,13 +61,37 @@ A = (selector,options)->
 					target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
 				else
 					target_index = if _current_index is 0 then 0 else _current_index-1
-				scrollTo target_index
+				fire target_index
+
+	onHashChange = (e)->
+		hash_array = window.location.hash.split(':')
+		if hash_array[1]
+			if hash_array[0].replace('#','') isnt _settings.id then return false
+			target_id = hash_array[1]
+		else
+			target_id = hash_array[0]
+		e.preventDefault()
+		target_node = document.getElementById target_id
+		target_index = _elements.indexOf target_node
+		fire target_index
+		return false
 
 	onClick = (e)->
 		trigger = e.currentTarget
 		target_id = trigger.dataset[_settings.id.toLowerCase()+'Target']
 		target = document.getElementById target_id
-		scrollTo target
+		fire target
+
+	fire = (el)->
+		_current_index = if isNaN(el) then _elements.indexOf el else parseInt(el)
+		_current_target = if isNaN(el) then el else _elements[parseInt(el)]
+		if _settings.hashed then setHash()
+		scroll()
+
+	setHash = ->
+		hash = if _current_target.id then _current_target.id else _current_index
+		if _settings.id then hash = _settings.id+':'+hash
+		window.location.hash = hash
 
 	paintTriggers = (target)->
 		# Reset active triggers
@@ -76,9 +102,7 @@ A = (selector,options)->
 			trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+target.id+'"]'
 			if trigger[0] then trigger[0].className += ' active'
 
-	scrollTo = (el)->
-		_current_index = if typeof el is 'number' then el else _elements.indexOf el
-		_current_target = if typeof el is 'number' then _elements[el] else el
+	scroll = (el)->
 		_scrolling = true
 		rect = _current_target.getBoundingClientRect()
 		offset_top = rect.top
