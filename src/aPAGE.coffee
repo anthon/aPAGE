@@ -67,7 +67,6 @@ A = (selector,options)->
 	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')
 		if hash_array[1]
-			console.log hash_array[0].replace('#','')
 			if hash_array[0].replace('#','') isnt _settings.id then return false
 			target_id = hash_array[1]
 		else
