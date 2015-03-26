@@ -3,7 +3,7 @@
   var A;
 
   A = function(selector, options) {
-    var activate, fire, halt, init, onClick, onHashChange, onScroll, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _triggers;
+    var activate, fetchHashAndFire, fire, halt, init, onClick, onScroll, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _triggers;
     _is_active = false;
     _elements = [];
     _triggers = [];
@@ -57,7 +57,7 @@
       if (!_is_active) {
         _body.addEventListener('wheel', onScroll);
         if (_settings.hashed) {
-          window.addEventListener('hashchange', onHashChange);
+          window.addEventListener('hashchange', fetchHashAndFire);
         }
         for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
           _triggers[i].addEventListener('click', onClick);
@@ -66,6 +66,9 @@
         if (_current_target) {
           return paintTriggers(_current_target);
         } else {
+          if (_settings.hashed) {
+            return fetchHashAndFire();
+          }
           return fire(_elements[0]);
         }
       }
@@ -85,7 +88,7 @@
         }
       }
     };
-    onHashChange = function(e) {
+    fetchHashAndFire = function(e) {
       var hash_array, target_id, target_index, target_node;
       hash_array = window.location.hash.split(':');
       if (hash_array[1]) {
@@ -96,7 +99,9 @@
       } else {
         target_id = hash_array[0];
       }
-      e.preventDefault();
+      if (e) {
+        e.preventDefault();
+      }
       target_node = document.getElementById(target_id);
       target_index = _elements.indexOf(target_node);
       fire(target_index);

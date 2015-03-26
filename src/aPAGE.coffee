@@ -43,13 +43,14 @@ A = (selector,options)->
 	activate = ->
 		if not _is_active
 			_body.addEventListener 'wheel', onScroll
-			if _settings.hashed then window.addEventListener 'hashchange', onHashChange
+			if _settings.hashed then window.addEventListener 'hashchange', fetchHashAndFire
 			for i in [0..._triggers.length] by 1
 				_triggers[i].addEventListener 'click', onClick
 			_is_active = true
 			if _current_target
 				paintTriggers _current_target
 			else
+				if _settings.hashed then return fetchHashAndFire()
 				fire _elements[0]
 
 	onScroll = (e)->
@@ -63,14 +64,14 @@ A = (selector,options)->
 					target_index = if _current_index is 0 then 0 else _current_index-1
 				fire target_index
 
-	onHashChange = (e)->
+	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')
 		if hash_array[1]
 			if hash_array[0].replace('#','') isnt _settings.id then return false
 			target_id = hash_array[1]
 		else
 			target_id = hash_array[0]
-		e.preventDefault()
+		if e then e.preventDefault()
 		target_node = document.getElementById target_id
 		target_index = _elements.indexOf target_node
 		fire target_index
