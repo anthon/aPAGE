@@ -92,6 +92,7 @@
       var hash_array, target_id, target_index, target_node;
       hash_array = window.location.hash.split(':');
       if (hash_array[1]) {
+        console.log(hash_array[0].replace('#', ''));
         if (hash_array[0].replace('#', '') !== _settings.id) {
           return false;
         }
