@@ -86,6 +86,7 @@ A = (selector,options)->
 	fire = (el)->
 		_current_index = if isNaN(el) then _elements.indexOf el else parseInt(el)
 		_current_target = if isNaN(el) then el else _elements[parseInt(el)]
+		if not _current_target then _current_target = _elements[0]
 		if _settings.hashed then setHash()
 		scroll()
 

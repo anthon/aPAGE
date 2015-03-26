@@ -117,6 +117,9 @@
     fire = function(el) {
       _current_index = isNaN(el) ? _elements.indexOf(el) : parseInt(el);
       _current_target = isNaN(el) ? el : _elements[parseInt(el)];
+      if (!_current_target) {
+        _current_target = _elements[0];
+      }
       if (_settings.hashed) {
         setHash();
       }
