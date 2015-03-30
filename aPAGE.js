@@ -3,8 +3,9 @@
   var A;
 
   A = function(selector, options) {
-    var activate, fetchHashAndFire, fire, halt, init, onClick, onScroll, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _triggers;
+    var activate, fetchHashAndFire, fire, halt, init, onClick, onScroll, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _trigger_delta, _triggers;
     _is_active = false;
+    _trigger_delta = 72;
     _elements = [];
     _triggers = [];
     _current_scroll_top = 0;
@@ -74,17 +75,22 @@
       }
     };
     onScroll = function(e) {
-      var delta, scroll_top, target_index;
+      var delta, overflow, scrollTop, scroll_top, target_index;
       if (!_scrolling) {
-        scroll_top = _body.scrollTop;
         delta = e.deltaY;
-        if (Math.abs(delta) > 42) {
-          if (delta > 0) {
-            target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
-          } else {
-            target_index = _current_index === 0 ? 0 : _current_index - 1;
+        overflow = _current_target.scrollHeight - _current_target.clientHeight;
+        scrollTop = _current_target.scrollTop;
+        if (overflow === 0 || (scrollTop === overflow && delta > _trigger_delta) || (scrollTop === 0 && delta < -_trigger_delta)) {
+          scroll_top = _body.scrollTop;
+          delta = e.deltaY;
+          if (Math.abs(delta) > _trigger_delta) {
+            if (delta > 0) {
+              target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
+            } else {
+              target_index = _current_index === 0 ? 0 : _current_index - 1;
+            }
+            return fire(target_index);
           }
-          return fire(target_index);
         }
       }
     };
