@@ -65,13 +65,14 @@
         }
         _is_active = true;
         if (_current_target) {
-          return paintTriggers(_current_target);
+          paintTriggers(_current_target);
         } else {
           if (_settings.hashed) {
             return fetchHashAndFire();
           }
-          return fire(_elements[0]);
+          fire(_elements[0]);
         }
+        return console.log('aPAGE instance "' + _settings.id + '" activated.');
       }
     };
     onScroll = function(e) {

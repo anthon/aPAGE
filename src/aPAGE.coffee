@@ -53,6 +53,7 @@ A = (selector,options)->
 			else
 				if _settings.hashed then return fetchHashAndFire()
 				fire _elements[0]
+			console.log 'aPAGE instance "'+_settings.id+'" activated.'
 
 	onScroll = (e)->
 		if not _scrolling
