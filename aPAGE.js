@@ -55,6 +55,7 @@
     };
     activate = function() {
       var i, _i, _ref;
+      console.log('Trying to activate "' + _settings.id + '"...');
       if (!_is_active) {
         _body.addEventListener('wheel', onScroll);
         if (_settings.hashed) {
@@ -63,16 +64,19 @@
         for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
           _triggers[i].addEventListener('click', onClick);
         }
-        _is_active = true;
         if (_current_target) {
           paintTriggers(_current_target);
         } else {
           if (_settings.hashed) {
-            return fetchHashAndFire();
+            if (!fetchHashAndFire()) {
+              fire(0);
+            }
+          } else {
+            fire(_elements[0]);
           }
-          fire(_elements[0]);
         }
-        return console.log('aPAGE instance "' + _settings.id + '" activated.');
+        _is_active = true;
+        return console.log('"' + _settings.id + '" activated.');
       }
     };
     onScroll = function(e) {
@@ -112,7 +116,9 @@
       target_node = document.getElementById(target_id);
       target_index = _elements.indexOf(target_node);
       fire(target_index);
-      return false;
+      if (e) {
+        return false;
+      }
     };
     onClick = function(e) {
       var target, target_id, trigger;
@@ -123,7 +129,7 @@
     };
     fire = function(el) {
       _current_index = isNaN(el) ? _elements.indexOf(el) : parseInt(el);
-      _current_target = isNaN(el) ? el : _elements[parseInt(el)];
+      _current_target = _elements[_current_index];
       if (!_current_target) {
         _current_target = _elements[0];
       }
@@ -173,7 +179,8 @@
           _triggers[i].removeEventListener('click', onClick);
         }
         paintTriggers(null);
-        return _is_active = false;
+        _is_active = false;
+        return console.log('"' + _settings.id + '" halted.');
       }
     };
     init(selector, options);

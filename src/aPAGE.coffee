@@ -42,18 +42,21 @@ A = (selector,options)->
 		_body.insertBefore _scroller, _elements[0]
 
 	activate = ->
+		console.log 'Trying to activate "'+_settings.id+'"...'
 		if not _is_active
 			_body.addEventListener 'wheel', onScroll
 			if _settings.hashed then window.addEventListener 'hashchange', fetchHashAndFire
 			for i in [0..._triggers.length] by 1
 				_triggers[i].addEventListener 'click', onClick
-			_is_active = true
 			if _current_target
 				paintTriggers _current_target
 			else
-				if _settings.hashed then return fetchHashAndFire()
-				fire _elements[0]
-			console.log 'aPAGE instance "'+_settings.id+'" activated.'
+				if _settings.hashed
+					if not fetchHashAndFire() then fire 0
+				else
+					fire _elements[0]
+			_is_active = true
+			console.log '"'+_settings.id+'" activated.'
 
 	onScroll = (e)->
 		if not _scrolling
@@ -81,7 +84,7 @@ A = (selector,options)->
 		target_node = document.getElementById target_id
 		target_index = _elements.indexOf target_node
 		fire target_index
-		return false
+		if e then return false
 
 	onClick = (e)->
 		trigger = e.currentTarget
@@ -91,7 +94,7 @@ A = (selector,options)->
 
 	fire = (el)->
 		_current_index = if isNaN(el) then _elements.indexOf el else parseInt(el)
-		_current_target = if isNaN(el) then el else _elements[parseInt(el)]
+		_current_target = _elements[_current_index]
 		if not _current_target then _current_target = _elements[0]
 		if _settings.hashed then setHash()
 		scroll()
@@ -131,6 +134,7 @@ A = (selector,options)->
 				_triggers[i].removeEventListener 'click', onClick
 			paintTriggers null
 			_is_active = false
+			console.log '"'+_settings.id+'" halted.'
 
 	init(selector,options)
 

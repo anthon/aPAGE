@@ -171,8 +171,20 @@
 
 	<script type="text/javascript">
 		
-		var aPage = new aPAGE('#view1',{id:'firstView'});
-		var aPage = new aPAGE('#view2',{id:'secondView'});
+		var aPage1 = aPAGE('#view1',{id:'firstView'});
+		var aPage2 = aPAGE('#view2',{id:'secondView'});
+
+		firstDiv = document.getElementById('view1');
+		secondDiv = document.getElementById('view2');
+		
+		firstDiv.addEventListener('mouseenter',function(e){
+			aPage2.halt()
+			aPage1.activate()
+		});
+		secondDiv.addEventListener('mouseenter',function(e){
+			aPage1.halt()
+			aPage2.activate()
+		});
 
 	</script>
 
