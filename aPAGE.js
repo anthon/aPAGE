@@ -111,7 +111,6 @@
       }
       target_node = document.getElementById(target_id);
       target_index = _elements.indexOf(target_node);
-      console.log(target_node);
       fire(target_index);
       if (e) {
         return false;
@@ -162,8 +161,6 @@
       offset_top = rect.top;
       style = _scroller.currentStyle || window.getComputedStyle(_scroller);
       current_margin = Math.abs(parseInt(style.marginTop.replace('px', '')));
-      console.log(current_margin + ' : ' + offset_top);
-      console.log(Math.abs(current_margin) + offset_top);
       _scroller.style.marginTop = '-' + Math.abs(Math.abs(current_margin) + offset_top) + 'px';
       paintTriggers(_current_target);
       return setTimeout(function() {
