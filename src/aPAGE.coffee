@@ -42,7 +42,7 @@ A = (selector,options)->
 		_body.insertBefore _scroller, _elements[0]
 
 	activate = ->
-		console.log 'Trying to activate "'+_settings.id+'"...'
+		# console.log 'Trying to activate "'+_settings.id+'"...'
 		if not _is_active
 			_body.addEventListener 'wheel', onScroll
 			if _settings.hashed then window.addEventListener 'hashchange', fetchHashAndFire
@@ -52,11 +52,11 @@ A = (selector,options)->
 				paintTriggers _current_target
 			else
 				if _settings.hashed
-					if not fetchHashAndFire() then fire 0
+					fetchHashAndFire()
 				else
 					fire _elements[0]
 			_is_active = true
-			console.log '"'+_settings.id+'" activated.'
+			# console.log '"'+_settings.id+'" activated.'
 
 	onScroll = (e)->
 		if not _scrolling
@@ -76,13 +76,14 @@ A = (selector,options)->
 	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')
 		if hash_array[1]
-			if hash_array[0].replace('#','') isnt _settings.id then return false
+			if hash_array[0].replace('#','') isnt _settings.id then return _current_target = _elements[0]
 			target_id = hash_array[1]
 		else
 			target_id = hash_array[0]
 		if e then e.preventDefault()
 		target_node = document.getElementById target_id
 		target_index = _elements.indexOf target_node
+		console.log target_node
 		fire target_index
 		if e then return false
 
@@ -113,13 +114,15 @@ A = (selector,options)->
 			trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+target.id+'"]'
 			if trigger[0] then trigger[0].className += ' active'
 
-	scroll = (el)->
+	scroll = ->
 		_scrolling = true
 		rect = _current_target.getBoundingClientRect()
 		offset_top = rect.top
 		style = _scroller.currentStyle || window.getComputedStyle _scroller
 		current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
-		_scroller.style.marginTop = '-'+(Math.abs(current_margin)+offset_top)+'px'
+		console.log current_margin + ' : ' + offset_top
+		console.log Math.abs(current_margin)+offset_top
+		_scroller.style.marginTop = '-'+Math.abs(Math.abs(current_margin)+offset_top)+'px'
 
 		paintTriggers _current_target
 
@@ -134,7 +137,7 @@ A = (selector,options)->
 				_triggers[i].removeEventListener 'click', onClick
 			paintTriggers null
 			_is_active = false
-			console.log '"'+_settings.id+'" halted.'
+			# console.log '"'+_settings.id+'" halted.'
 
 	init(selector,options)
 

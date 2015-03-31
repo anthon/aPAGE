@@ -55,7 +55,6 @@
     };
     activate = function() {
       var i, _i, _ref;
-      console.log('Trying to activate "' + _settings.id + '"...');
       if (!_is_active) {
         _body.addEventListener('wheel', onScroll);
         if (_settings.hashed) {
@@ -68,15 +67,12 @@
           paintTriggers(_current_target);
         } else {
           if (_settings.hashed) {
-            if (!fetchHashAndFire()) {
-              fire(0);
-            }
+            fetchHashAndFire();
           } else {
             fire(_elements[0]);
           }
         }
-        _is_active = true;
-        return console.log('"' + _settings.id + '" activated.');
+        return _is_active = true;
       }
     };
     onScroll = function(e) {
@@ -104,7 +100,7 @@
       hash_array = window.location.hash.split(':');
       if (hash_array[1]) {
         if (hash_array[0].replace('#', '') !== _settings.id) {
-          return false;
+          return _current_target = _elements[0];
         }
         target_id = hash_array[1];
       } else {
@@ -115,6 +111,7 @@
       }
       target_node = document.getElementById(target_id);
       target_index = _elements.indexOf(target_node);
+      console.log(target_node);
       fire(target_index);
       if (e) {
         return false;
@@ -158,14 +155,16 @@
         }
       }
     };
-    scroll = function(el) {
+    scroll = function() {
       var current_margin, offset_top, rect, style;
       _scrolling = true;
       rect = _current_target.getBoundingClientRect();
       offset_top = rect.top;
       style = _scroller.currentStyle || window.getComputedStyle(_scroller);
       current_margin = Math.abs(parseInt(style.marginTop.replace('px', '')));
-      _scroller.style.marginTop = '-' + (Math.abs(current_margin) + offset_top) + 'px';
+      console.log(current_margin + ' : ' + offset_top);
+      console.log(Math.abs(current_margin) + offset_top);
+      _scroller.style.marginTop = '-' + Math.abs(Math.abs(current_margin) + offset_top) + 'px';
       paintTriggers(_current_target);
       return setTimeout(function() {
         return _scrolling = false;
@@ -179,8 +178,7 @@
           _triggers[i].removeEventListener('click', onClick);
         }
         paintTriggers(null);
-        _is_active = false;
-        return console.log('"' + _settings.id + '" halted.');
+        return _is_active = false;
       }
     };
     init(selector, options);
