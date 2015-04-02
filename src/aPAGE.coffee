@@ -121,6 +121,7 @@ A = (selector,options)->
 		current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
 		_scroller.style.marginTop = '-'+Math.abs(Math.abs(current_margin)+offset_top)+'px'
 
+		_current_target.scrollTop = 0
 		paintTriggers _current_target
 
 		setTimeout ->
