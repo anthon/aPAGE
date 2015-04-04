@@ -135,7 +135,9 @@
       }
       target_node = document.getElementById(target_id);
       target_index = _elements.indexOf(target_node);
-      fire(target_index);
+      if (target_index !== -1) {
+        fire(target_index);
+      }
       if (e) {
         return false;
       }
@@ -143,9 +145,11 @@
     onClick = function(e) {
       var target, target_id, trigger;
       trigger = e.currentTarget;
-      target_id = trigger.dataset[_settings.id.toLowerCase() + 'Target'];
+      target_id = trigger.dataset['apageTarget'];
       target = document.getElementById(target_id);
-      return fire(target);
+      if (target !== -1) {
+        return fire(target);
+      }
     };
     fire = function(el) {
       _current_index = isNaN(el) ? _elements.indexOf(el) : parseInt(el);

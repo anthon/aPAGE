@@ -105,14 +105,16 @@ A = (selector,options)->
 		if e then e.preventDefault()
 		target_node = document.getElementById target_id
 		target_index = _elements.indexOf target_node
-		fire target_index
+		if target_index isnt -1
+			fire target_index
 		if e then return false
 
 	onClick = (e)->
 		trigger = e.currentTarget
-		target_id = trigger.dataset[_settings.id.toLowerCase()+'Target']
+		target_id = trigger.dataset['apageTarget']
 		target = document.getElementById target_id
-		fire target
+		if target isnt -1
+			fire target
 
 	fire = (el)->
 		_current_index = if isNaN(el) then _elements.indexOf el else parseInt(el)
