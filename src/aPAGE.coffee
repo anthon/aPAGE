@@ -97,13 +97,12 @@ A = (selector,options)->
 
 	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')
+		if hash_array[0] is '' then return _current_target = _elements[0]
 		if hash_array[1]
 			if hash_array[0].replace('#','') isnt _settings.id then return _current_target = _elements[0]
 			target_id = hash_array[1]
-		else if hash_array[0]
-			target_id = hash_array[0]
 		else
-			return _current_target = _elements[0]
+			target_id = hash_array[0]
 		if e then e.preventDefault()
 		target_node = document.getElementById target_id
 		target_index = _elements.indexOf target_node
