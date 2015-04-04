@@ -29,7 +29,7 @@
         _settings[key] = value;
       }
       _body = document.querySelector(selector);
-      _triggers = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target]');
+      _triggers = document.querySelectorAll('[data-apage="' + _settings.id + '"]');
       setup();
       if (!_settings.halted) {
         return activate();

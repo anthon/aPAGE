@@ -21,7 +21,7 @@ A = (selector,options)->
 		for key,value of options
 			_settings[key] = value
 		_body = document.querySelector selector
-		_triggers = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target]'
+		_triggers = document.querySelectorAll '[data-apage="'+_settings.id+'"]'
 		setup()
 		if not _settings.halted then activate()
 
