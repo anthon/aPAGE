@@ -97,17 +97,19 @@ A = (selector,options)->
 
 	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')
-		if hash_array[0] is '' then return _current_target = _elements[0]
-		if hash_array[1]
-			if hash_array[0].replace('#','') isnt _settings.id then return _current_target = _elements[0]
-			target_id = hash_array[1]
+		if hash_array[0] isnt ''
+			if hash_array[1]
+				if hash_array[0].replace('#','') isnt _settings.id then return _current_target = _elements[0]
+				target_id = hash_array[1]
+			else
+				target_id = hash_array[0]
+			target_node = document.getElementById target_id
+			target_index = _elements.indexOf target_node
+			if target_index is -1 then return _current_target = _elements[0]
 		else
-			target_id = hash_array[0]
+			target_index = 0
 		if e then e.preventDefault()
-		target_node = document.getElementById target_id
-		target_index = _elements.indexOf target_node
-		if target_index isnt -1
-			fire target_index
+		fire target_index
 		if e then return false
 
 	onClick = (e)->
