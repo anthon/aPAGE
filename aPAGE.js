@@ -3,9 +3,9 @@
   var A;
 
   A = function(selector, options) {
-    var activate, fetchHashAndFire, fire, halt, init, onClick, onScroll, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _trigger_delta, _triggers;
+    var activate, fetchHashAndFire, fire, halt, init, onBodyTouchMove, onClick, onScroll, onTouchEnd, onTouchStart, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _touch_y, _triggers;
     _is_active = false;
-    _trigger_delta = 72;
+    _touch_y = 0;
     _elements = [];
     _triggers = [];
     _current_scroll_top = 0;
@@ -19,7 +19,8 @@
       duration: 500,
       fill: true,
       halted: false,
-      hashed: true
+      hashed: true,
+      trigger_delta: 72
     };
     init = function(selector, options) {
       var key, value;
@@ -57,6 +58,9 @@
       var i, _i, _ref;
       if (!_is_active) {
         _body.addEventListener('wheel', onScroll);
+        document.body.addEventListener('touchmove', onBodyTouchMove);
+        _body.addEventListener('touchstart', onTouchStart);
+        _body.addEventListener('touchend', onTouchEnd);
         if (_settings.hashed) {
           window.addEventListener('hashchange', fetchHashAndFire);
         }
@@ -81,10 +85,10 @@
         delta = e.deltaY;
         overflow = _current_target.scrollHeight - _current_target.clientHeight;
         scrollTop = _current_target.scrollTop;
-        if (overflow === 0 || (scrollTop === overflow && delta > _trigger_delta) || (scrollTop === 0 && delta < -_trigger_delta)) {
+        if (overflow === 0 || (scrollTop === overflow && delta > _settings.trigger_delta) || (scrollTop === 0 && delta < -_settings.trigger_delta)) {
           scroll_top = _body.scrollTop;
           delta = e.deltaY;
-          if (Math.abs(delta) > _trigger_delta) {
+          if (Math.abs(delta) > _settings.trigger_delta) {
             if (delta > 0) {
               target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
             } else {
@@ -93,6 +97,26 @@
             return fire(target_index);
           }
         }
+      }
+    };
+    onBodyTouchMove = function(e) {
+      e.preventDefault();
+      return false;
+    };
+    onTouchStart = function(e) {
+      return _touch_y = e.changedTouches[0].pageY;
+    };
+    onTouchEnd = function(e) {
+      var delta, target_index;
+      delta = e.changedTouches[0].pageY - _touch_y;
+      console.log(delta);
+      if (Math.abs(delta) > _settings.trigger_delta) {
+        if (delta < 0) {
+          target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
+        } else {
+          target_index = _current_index === 0 ? 0 : _current_index - 1;
+        }
+        return fire(target_index);
       }
     };
     fetchHashAndFire = function(e) {
@@ -172,6 +196,9 @@
       var i, _i, _ref;
       if (_is_active) {
         _body.removeEventListener('wheel', onScroll);
+        document.body.removeEventListener('touchmove', onBodyTouchMove);
+        _body.removeEventListener('touchstart', onTouchStart);
+        _body.removeEventListener('touchend', onTouchEnd);
         for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
           _triggers[i].removeEventListener('click', onClick);
         }

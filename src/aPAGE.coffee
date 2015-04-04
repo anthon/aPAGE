@@ -1,6 +1,6 @@
 A = (selector,options)->
 	_is_active = false
-	_trigger_delta = 72
+	_touch_y = 0
 	_elements = []
 	_triggers = []
 	_current_scroll_top = 0
@@ -15,6 +15,7 @@ A = (selector,options)->
 		fill: true
 		halted: false
 		hashed: true
+		trigger_delta: 72
 
 	init = (selector,options)->
 		for key,value of options
@@ -45,6 +46,10 @@ A = (selector,options)->
 		# console.log 'Trying to activate "'+_settings.id+'"...'
 		if not _is_active
 			_body.addEventListener 'wheel', onScroll
+			# Deactivating overscroll
+			document.body.addEventListener 'touchmove', onBodyTouchMove
+			_body.addEventListener 'touchstart', onTouchStart
+			_body.addEventListener 'touchend', onTouchEnd
 			if _settings.hashed then window.addEventListener 'hashchange', fetchHashAndFire
 			for i in [0..._triggers.length] by 1
 				_triggers[i].addEventListener 'click', onClick
@@ -63,15 +68,32 @@ A = (selector,options)->
 			delta = e.deltaY
 			overflow = _current_target.scrollHeight - _current_target.clientHeight
 			scrollTop = _current_target.scrollTop
-			if overflow is 0 or (scrollTop is overflow and delta > _trigger_delta) or (scrollTop is 0 and delta < -_trigger_delta) 
+			if overflow is 0 or (scrollTop is overflow and delta > _settings.trigger_delta) or (scrollTop is 0 and delta < -_settings.trigger_delta) 
 				scroll_top = _body.scrollTop
 				delta = e.deltaY
-				if Math.abs(delta) > _trigger_delta
+				if Math.abs(delta) > _settings.trigger_delta
 					if delta > 0
 						target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
 					else
 						target_index = if _current_index is 0 then 0 else _current_index-1
 					fire target_index
+
+	onBodyTouchMove = (e)->
+		e.preventDefault()
+		return false
+
+	onTouchStart = (e)->
+		_touch_y = e.changedTouches[0].pageY
+
+	onTouchEnd = (e)->
+		delta = e.changedTouches[0].pageY - _touch_y
+		console.log delta
+		if Math.abs(delta) > _settings.trigger_delta
+			if delta < 0
+				target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
+			else
+				target_index = if _current_index is 0 then 0 else _current_index-1
+			fire target_index
 
 	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')
@@ -131,6 +153,9 @@ A = (selector,options)->
 	halt = ->
 		if _is_active
 			_body.removeEventListener 'wheel', onScroll
+			document.body.removeEventListener 'touchmove', onBodyTouchMove
+			_body.removeEventListener 'touchstart', onTouchStart
+			_body.removeEventListener 'touchend', onTouchEnd
 			for i in [0..._triggers.length] by 1
 				_triggers[i].removeEventListener 'click', onClick
 			paintTriggers null
