@@ -127,8 +127,10 @@
           return _current_target = _elements[0];
         }
         target_id = hash_array[1];
-      } else {
+      } else if (hash_array[0]) {
         target_id = hash_array[0];
+      } else {
+        return _current_target = _elements[0];
       }
       if (e) {
         e.preventDefault();
