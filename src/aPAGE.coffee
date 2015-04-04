@@ -132,7 +132,7 @@ A = (selector,options)->
 			_triggers[i].className = _triggers[i].className.replace('active','').trim()
 		# Get trigger and apply .active
 		if target
-			trigger = document.querySelectorAll '[data-'+_settings.id.toLowerCase()+'-target="'+target.id+'"]'
+			trigger = document.querySelectorAll '[data-apage="'+_settings.id+'"][data-apage-target="'+target.id+'"]'
 			if trigger[0] then trigger[0].className += ' active'
 
 	scroll = ->

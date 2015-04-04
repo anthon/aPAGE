@@ -172,7 +172,7 @@
         _triggers[i].className = _triggers[i].className.replace('active', '').trim();
       }
       if (target) {
-        trigger = document.querySelectorAll('[data-' + _settings.id.toLowerCase() + '-target="' + target.id + '"]');
+        trigger = document.querySelectorAll('[data-apage="' + _settings.id + '"][data-apage-target="' + target.id + '"]');
         if (trigger[0]) {
           return trigger[0].className += ' active';
         }
