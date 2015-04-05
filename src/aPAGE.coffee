@@ -41,6 +41,8 @@ A = (selector,options)->
 		_scroller = document.createElement 'div'
 		_scroller.style.transition = 'margin-top '+(_settings.duration/1000)+'s ease-in-out'
 		_body.insertBefore _scroller, _elements[0]
+		# Activate resizer
+		window.addEventListener 'resize', onResize
 
 	activate = ->
 		# console.log 'Trying to activate "'+_settings.id+'"...'
@@ -62,6 +64,9 @@ A = (selector,options)->
 					fire _elements[0]
 			_is_active = true
 			# console.log '"'+_settings.id+'" activated.'
+
+	onResize = ->
+		scroll()
 
 	onScroll = (e)->
 		if not _scrolling

@@ -3,7 +3,7 @@
   var A;
 
   A = function(selector, options) {
-    var activate, fetchHashAndFire, fire, halt, init, onBodyTouchMove, onClick, onScroll, onTouchEnd, onTouchStart, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _touch_y, _triggers;
+    var activate, fetchHashAndFire, fire, halt, init, onBodyTouchMove, onClick, onResize, onScroll, onTouchEnd, onTouchStart, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _touch_y, _triggers;
     _is_active = false;
     _touch_y = 0;
     _elements = [];
@@ -52,7 +52,8 @@
       }
       _scroller = document.createElement('div');
       _scroller.style.transition = 'margin-top ' + (_settings.duration / 1000) + 's ease-in-out';
-      return _body.insertBefore(_scroller, _elements[0]);
+      _body.insertBefore(_scroller, _elements[0]);
+      return window.addEventListener('resize', onResize);
     };
     activate = function() {
       var i, _i, _ref;
@@ -78,6 +79,9 @@
         }
         return _is_active = true;
       }
+    };
+    onResize = function() {
+      return scroll();
     };
     onScroll = function(e) {
       var delta, overflow, scrollTop, scroll_top, target_index;
