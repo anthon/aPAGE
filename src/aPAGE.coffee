@@ -7,7 +7,9 @@ A = (selector,options)->
 	_current_index = 0
 	_current_target = null
 	_scroller = null
+	_sliding = false
 	_scrolling = false
+	_blocker = null
 	_body = null
 	_settings =
 		id: 'aPAGE'
@@ -69,12 +71,22 @@ A = (selector,options)->
 		scroll()
 
 	onScroll = (e)->
-		if not _scrolling
+		if not _sliding
 			delta = e.deltaY
-			overflow = _current_target.scrollHeight - _current_target.offsetHeight
-			scrollTop = _current_target.scrollTop
-			if overflow is 0 or (scrollTop is overflow and delta > _settings.trigger_delta) or (scrollTop is 0 and delta < -_settings.trigger_delta) 
-				scroll_top = _body.scrollTop
+			overflow = Math.round(_current_target.scrollHeight - _current_target.offsetHeight)
+			scrollTop = Math.round(_current_target.scrollTop)
+			scrolling_down = delta > 0
+			has_overflow = overflow isnt 0
+			if has_overflow
+				has_reached_overflow = (scrollTop is overflow and scrolling_down) or (scrollTop is 0 and not scrolling_down)
+				if not has_reached_overflow
+					_scrolling = true
+					clearTimeout _blocker
+					_blocker = setTimeout ->
+						_scrolling = false
+					,400
+					return false
+			if not _scrolling and (not has_overflow or has_reached_overflow)
 				delta = e.deltaY
 				if Math.abs(delta) > _settings.trigger_delta
 					if delta > 0
@@ -92,7 +104,6 @@ A = (selector,options)->
 
 	onTouchEnd = (e)->
 		delta = e.changedTouches[0].pageY - _touch_y
-		console.log delta
 		if Math.abs(delta) > _settings.trigger_delta
 			if delta < 0
 				target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
@@ -146,7 +157,7 @@ A = (selector,options)->
 			if trigger[0] then trigger[0].className += ' active'
 
 	scroll = ->
-		_scrolling = true
+		_sliding = true
 		rect = _current_target.getBoundingClientRect()
 		offset_top = rect.top
 		style = _scroller.currentStyle || window.getComputedStyle _scroller
@@ -157,7 +168,7 @@ A = (selector,options)->
 		paintTriggers _current_target
 
 		setTimeout ->
-			_scrolling = false
+			_sliding = false
 		,_settings.duration
 
 	halt = ->

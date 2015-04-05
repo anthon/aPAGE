@@ -3,7 +3,7 @@
   var A;
 
   A = function(selector, options) {
-    var activate, fetchHashAndFire, fire, halt, init, onBodyTouchMove, onClick, onResize, onScroll, onTouchEnd, onTouchStart, paintTriggers, scroll, setHash, setup, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _touch_y, _triggers;
+    var activate, fetchHashAndFire, fire, halt, init, onBodyTouchMove, onClick, onResize, onScroll, onTouchEnd, onTouchStart, paintTriggers, scroll, setHash, setup, _blocker, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _sliding, _touch_y, _triggers;
     _is_active = false;
     _touch_y = 0;
     _elements = [];
@@ -12,7 +12,9 @@
     _current_index = 0;
     _current_target = null;
     _scroller = null;
+    _sliding = false;
     _scrolling = false;
+    _blocker = null;
     _body = null;
     _settings = {
       id: 'aPAGE',
@@ -84,13 +86,25 @@
       return scroll();
     };
     onScroll = function(e) {
-      var delta, overflow, scrollTop, scroll_top, target_index;
-      if (!_scrolling) {
+      var delta, has_overflow, has_reached_overflow, overflow, scrollTop, scrolling_down, target_index;
+      if (!_sliding) {
         delta = e.deltaY;
-        overflow = _current_target.scrollHeight - _current_target.offsetHeight;
-        scrollTop = _current_target.scrollTop;
-        if (overflow === 0 || (scrollTop === overflow && delta > _settings.trigger_delta) || (scrollTop === 0 && delta < -_settings.trigger_delta)) {
-          scroll_top = _body.scrollTop;
+        overflow = Math.round(_current_target.scrollHeight - _current_target.offsetHeight);
+        scrollTop = Math.round(_current_target.scrollTop);
+        scrolling_down = delta > 0;
+        has_overflow = overflow !== 0;
+        if (has_overflow) {
+          has_reached_overflow = (scrollTop === overflow && scrolling_down) || (scrollTop === 0 && !scrolling_down);
+          if (!has_reached_overflow) {
+            _scrolling = true;
+            clearTimeout(_blocker);
+            _blocker = setTimeout(function() {
+              return _scrolling = false;
+            }, 400);
+            return false;
+          }
+        }
+        if (!_scrolling && (!has_overflow || has_reached_overflow)) {
           delta = e.deltaY;
           if (Math.abs(delta) > _settings.trigger_delta) {
             if (delta > 0) {
@@ -113,7 +127,6 @@
     onTouchEnd = function(e) {
       var delta, target_index;
       delta = e.changedTouches[0].pageY - _touch_y;
-      console.log(delta);
       if (Math.abs(delta) > _settings.trigger_delta) {
         if (delta < 0) {
           target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
@@ -193,7 +206,7 @@
     };
     scroll = function() {
       var current_margin, offset_top, rect, style;
-      _scrolling = true;
+      _sliding = true;
       rect = _current_target.getBoundingClientRect();
       offset_top = rect.top;
       style = _scroller.currentStyle || window.getComputedStyle(_scroller);
@@ -202,7 +215,7 @@
       _current_target.scrollTop = 0;
       paintTriggers(_current_target);
       return setTimeout(function() {
-        return _scrolling = false;
+        return _sliding = false;
       }, _settings.duration);
     };
     halt = function() {
