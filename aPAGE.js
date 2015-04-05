@@ -83,7 +83,7 @@
       var delta, overflow, scrollTop, scroll_top, target_index;
       if (!_scrolling) {
         delta = e.deltaY;
-        overflow = _current_target.scrollHeight - _current_target.clientHeight;
+        overflow = _current_target.scrollHeight - _current_target.offsetHeight;
         scrollTop = _current_target.scrollTop;
         if (overflow === 0 || (scrollTop === overflow && delta > _settings.trigger_delta) || (scrollTop === 0 && delta < -_settings.trigger_delta)) {
           scroll_top = _body.scrollTop;

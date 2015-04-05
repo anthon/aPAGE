@@ -66,7 +66,7 @@ A = (selector,options)->
 	onScroll = (e)->
 		if not _scrolling
 			delta = e.deltaY
-			overflow = _current_target.scrollHeight - _current_target.clientHeight
+			overflow = _current_target.scrollHeight - _current_target.offsetHeight
 			scrollTop = _current_target.scrollTop
 			if overflow is 0 or (scrollTop is overflow and delta > _settings.trigger_delta) or (scrollTop is 0 and delta < -_settings.trigger_delta) 
 				scroll_top = _body.scrollTop
