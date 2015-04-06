@@ -3,7 +3,7 @@
   var A;
 
   A = function(selector, options) {
-    var activate, fetchHashAndFire, fire, halt, init, onBodyTouchMove, onClick, onResize, onScroll, onTouchEnd, onTouchStart, paintTriggers, scroll, setHash, setup, _blocker, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _sliding, _touch_y, _triggers;
+    var activate, fetchHashAndFire, fire, halt, init, onClick, onResize, onScroll, onTouchEnd, onTouchMove, onTouchStart, paintTriggers, scroll, setHash, setup, _blocker, _body, _current_index, _current_scroll_top, _current_target, _elements, _is_active, _scroller, _scrolling, _settings, _sliding, _touch_y, _triggers;
     _is_active = false;
     _touch_y = 0;
     _elements = [];
@@ -39,6 +39,7 @@
     };
     setup = function() {
       var element, elements, i, _i, _ref;
+      document.body.style.overflow = 'hidden';
       _body.style.overflow = 'hidden';
       _body.style.transform = 'translateZ(0)';
       elements = _body.childNodes;
@@ -61,7 +62,7 @@
       var i, _i, _ref;
       if (!_is_active) {
         _body.addEventListener('wheel', onScroll);
-        document.body.addEventListener('touchmove', onBodyTouchMove);
+        _body.addEventListener('touchmove', onTouchMove);
         _body.addEventListener('touchstart', onTouchStart);
         _body.addEventListener('touchend', onTouchEnd);
         if (_settings.hashed) {
@@ -117,12 +118,9 @@
         }
       }
     };
-    onBodyTouchMove = function(e) {
+    onTouchMove = function(e) {
       var delta, has_overflow, has_reached_overflow, overflow, scrollTop, scrolling_down;
-      if (!_scrolling && !_current_target.contains(e.target)) {
-        e.stopPropagation();
-        return false;
-      }
+      e.stopPropagation();
       delta = e.changedTouches[0].pageY - _touch_y;
       overflow = Math.round(_current_target.scrollHeight - _current_target.offsetHeight);
       scrollTop = Math.round(_current_target.scrollTop);
@@ -130,13 +128,17 @@
       has_overflow = overflow !== 0;
       if (has_overflow) {
         has_reached_overflow = (scrollTop === overflow && scrolling_down) || (scrollTop === 0 && !scrolling_down);
-        if (!has_reached_overflow) {
+        if (has_reached_overflow) {
+          return e.preventDefault();
+        } else {
           _scrolling = true;
           clearTimeout(_blocker);
           return _blocker = setTimeout(function() {
             return _scrolling = false;
-          }, 1000);
+          }, 400);
         }
+      } else {
+        return e.preventDefault();
       }
     };
     onTouchStart = function(e) {

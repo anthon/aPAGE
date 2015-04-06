@@ -28,6 +28,7 @@ A = (selector,options)->
 		if not _settings.halted then activate()
 
 	setup = ->
+		document.body.style.overflow = 'hidden'
 		_body.style.overflow = 'hidden'
 		_body.style.transform = 'translateZ(0)'
 		# Initialise elements
@@ -51,7 +52,7 @@ A = (selector,options)->
 		if not _is_active
 			_body.addEventListener 'wheel', onScroll
 			# Deactivating overscroll
-			document.body.addEventListener 'touchmove', onBodyTouchMove
+			_body.addEventListener 'touchmove', onTouchMove
 			_body.addEventListener 'touchstart', onTouchStart
 			_body.addEventListener 'touchend', onTouchEnd
 			if _settings.hashed then window.addEventListener 'hashchange', fetchHashAndFire
@@ -95,10 +96,8 @@ A = (selector,options)->
 						target_index = if _current_index is 0 then 0 else _current_index-1
 					fire target_index
 
-	onBodyTouchMove = (e)->
-		if not _scrolling and not _current_target.contains e.target
-			e.stopPropagation()
-			return false
+	onTouchMove = (e)->
+		e.stopPropagation()
 		delta = e.changedTouches[0].pageY - _touch_y
 		overflow = Math.round(_current_target.scrollHeight - _current_target.offsetHeight)
 		scrollTop = Math.round(_current_target.scrollTop)
@@ -106,12 +105,16 @@ A = (selector,options)->
 		has_overflow = overflow isnt 0
 		if has_overflow
 			has_reached_overflow = (scrollTop is overflow and scrolling_down) or (scrollTop is 0 and not scrolling_down)
-			if not has_reached_overflow
+			if has_reached_overflow
+				e.preventDefault()
+			else
 				_scrolling = true
 				clearTimeout _blocker
 				_blocker = setTimeout ->
 					_scrolling = false
-				,1000
+				,400
+		else
+			e.preventDefault()
 
 	onTouchStart = (e)->
 		_touch_y = e.changedTouches[0].pageY
