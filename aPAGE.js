@@ -244,7 +244,7 @@
       var i, _i, _ref;
       if (_is_active) {
         _body.removeEventListener('wheel', onScroll);
-        document.body.removeEventListener('touchmove', onBodyTouchMove);
+        document.body.removeEventListener('touchmove', onTouchMove);
         _body.removeEventListener('touchstart', onTouchStart);
         _body.removeEventListener('touchend', onTouchEnd);
         for (i = _i = 0, _ref = _triggers.length; _i < _ref; i = _i += 1) {
