@@ -96,20 +96,35 @@ A = (selector,options)->
 					fire target_index
 
 	onBodyTouchMove = (e)->
-		e.preventDefault()
-		return false
+		if not _scrolling and not _current_target.contains e.target
+			e.stopPropagation()
+			return false
+		delta = e.changedTouches[0].pageY - _touch_y
+		overflow = Math.round(_current_target.scrollHeight - _current_target.offsetHeight)
+		scrollTop = Math.round(_current_target.scrollTop)
+		scrolling_down = delta < 0
+		has_overflow = overflow isnt 0
+		if has_overflow
+			has_reached_overflow = (scrollTop is overflow and scrolling_down) or (scrollTop is 0 and not scrolling_down)
+			if not has_reached_overflow
+				_scrolling = true
+				clearTimeout _blocker
+				_blocker = setTimeout ->
+					_scrolling = false
+				,1000
 
 	onTouchStart = (e)->
 		_touch_y = e.changedTouches[0].pageY
 
 	onTouchEnd = (e)->
-		delta = e.changedTouches[0].pageY - _touch_y
-		if Math.abs(delta) > _settings.trigger_delta
-			if delta < 0
-				target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
-			else
-				target_index = if _current_index is 0 then 0 else _current_index-1
-			fire target_index
+		if not _scrolling
+			delta = e.changedTouches[0].pageY - _touch_y
+			if Math.abs(delta) > _settings.trigger_delta
+				if delta < 0
+					target_index = if _current_index is _elements.length-1 then _elements.length-1 else _current_index+1
+				else
+					target_index = if _current_index is 0 then 0 else _current_index-1
+				fire target_index
 
 	fetchHashAndFire = (e)->
 		hash_array = window.location.hash.split(':')

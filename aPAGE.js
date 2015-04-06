@@ -118,22 +118,42 @@
       }
     };
     onBodyTouchMove = function(e) {
-      e.preventDefault();
-      return false;
+      var delta, has_overflow, has_reached_overflow, overflow, scrollTop, scrolling_down;
+      if (!_scrolling && !_current_target.contains(e.target)) {
+        e.stopPropagation();
+        return false;
+      }
+      delta = e.changedTouches[0].pageY - _touch_y;
+      overflow = Math.round(_current_target.scrollHeight - _current_target.offsetHeight);
+      scrollTop = Math.round(_current_target.scrollTop);
+      scrolling_down = delta < 0;
+      has_overflow = overflow !== 0;
+      if (has_overflow) {
+        has_reached_overflow = (scrollTop === overflow && scrolling_down) || (scrollTop === 0 && !scrolling_down);
+        if (!has_reached_overflow) {
+          _scrolling = true;
+          clearTimeout(_blocker);
+          return _blocker = setTimeout(function() {
+            return _scrolling = false;
+          }, 1000);
+        }
+      }
     };
     onTouchStart = function(e) {
       return _touch_y = e.changedTouches[0].pageY;
     };
     onTouchEnd = function(e) {
       var delta, target_index;
-      delta = e.changedTouches[0].pageY - _touch_y;
-      if (Math.abs(delta) > _settings.trigger_delta) {
-        if (delta < 0) {
-          target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
-        } else {
-          target_index = _current_index === 0 ? 0 : _current_index - 1;
+      if (!_scrolling) {
+        delta = e.changedTouches[0].pageY - _touch_y;
+        if (Math.abs(delta) > _settings.trigger_delta) {
+          if (delta < 0) {
+            target_index = _current_index === _elements.length - 1 ? _elements.length - 1 : _current_index + 1;
+          } else {
+            target_index = _current_index === 0 ? 0 : _current_index - 1;
+          }
+          return fire(target_index);
         }
-        return fire(target_index);
       }
     };
     fetchHashAndFire = function(e) {
