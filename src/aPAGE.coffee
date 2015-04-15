@@ -175,19 +175,20 @@ A = (selector,options)->
 			if trigger[0] then trigger[0].className += ' active'
 
 	scroll = ->
-		_sliding = true
-		rect = _current_target.getBoundingClientRect()
-		offset_top = rect.top
-		style = _scroller.currentStyle || window.getComputedStyle _scroller
-		current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
-		_scroller.style.marginTop = '-'+Math.abs(Math.abs(current_margin)+offset_top)+'px'
+		if _current_target
+			_sliding = true
+			rect = _current_target.getBoundingClientRect()
+			offset_top = rect.top
+			style = _scroller.currentStyle || window.getComputedStyle _scroller
+			current_margin = Math.abs(parseInt(style.marginTop.replace('px','')))
+			_scroller.style.marginTop = '-'+Math.abs(Math.abs(current_margin)+offset_top)+'px'
 
-		_current_target.scrollTop = 0
-		paintTriggers _current_target
+			_current_target.scrollTop = 0
+			paintTriggers _current_target
 
-		setTimeout ->
-			_sliding = false
-		,_settings.duration
+			setTimeout ->
+				_sliding = false
+			,_settings.duration
 
 	halt = ->
 		if _is_active

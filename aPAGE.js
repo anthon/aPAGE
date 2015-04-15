@@ -228,17 +228,19 @@
     };
     scroll = function() {
       var current_margin, offset_top, rect, style;
-      _sliding = true;
-      rect = _current_target.getBoundingClientRect();
-      offset_top = rect.top;
-      style = _scroller.currentStyle || window.getComputedStyle(_scroller);
-      current_margin = Math.abs(parseInt(style.marginTop.replace('px', '')));
-      _scroller.style.marginTop = '-' + Math.abs(Math.abs(current_margin) + offset_top) + 'px';
-      _current_target.scrollTop = 0;
-      paintTriggers(_current_target);
-      return setTimeout(function() {
-        return _sliding = false;
-      }, _settings.duration);
+      if (_current_target) {
+        _sliding = true;
+        rect = _current_target.getBoundingClientRect();
+        offset_top = rect.top;
+        style = _scroller.currentStyle || window.getComputedStyle(_scroller);
+        current_margin = Math.abs(parseInt(style.marginTop.replace('px', '')));
+        _scroller.style.marginTop = '-' + Math.abs(Math.abs(current_margin) + offset_top) + 'px';
+        _current_target.scrollTop = 0;
+        paintTriggers(_current_target);
+        return setTimeout(function() {
+          return _sliding = false;
+        }, _settings.duration);
+      }
     };
     halt = function() {
       var i, _i, _ref;
